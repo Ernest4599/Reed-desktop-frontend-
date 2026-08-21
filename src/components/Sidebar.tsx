@@ -1,42 +1,43 @@
 import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { Home, Video, MessageCircle, User, Sparkles, Bookmark, Sun, Settings } from "lucide-react";
 
-type NavItem = "Home" | "Reel" | "RAI" | "Message" | "Profile" | "Saved" | "Settings";
-
-type SidebarProps = {
-  activeItem: NavItem;
-  onItemClick: (item: NavItem) => void;
+type NavItemData = {
+  label: string;
+  path: string;
+  icon: React.ReactNode;
 };
 
-export default function Sidebar({ activeItem, onItemClick }: SidebarProps) {
+export default function Sidebar() {
   const [lightMode, setLightMode] = useState(true);
+  const location = useLocation();
 
-  const navItems: { label: NavItem; icon: React.ReactNode }[] = [
-    { label: "Home", icon: <Home size={20} /> },
-    { label: "Reel", icon: <Video size={20} /> },
-    { label: "RAI", icon: <Sparkles size={20} /> },
-    { label: "Message", icon: <MessageCircle size={20} /> },
-    { label: "Profile", icon: <User size={20} /> },
-    { label: "Saved", icon: <Bookmark size={20} /> },
-    { label: "Settings", icon: <Settings size={20} /> },
+  const navItems: NavItemData[] = [
+    { label: "Home", path: "/", icon: <Home size={20} /> },
+    { label: "Reel", path: "/reel", icon: <Video size={20} /> },
+    { label: "RAI", path: "/rai", icon: <Sparkles size={20} /> },
+    { label: "Message", path: "/message", icon: <MessageCircle size={20} /> },
+    { label: "Profile", path: "/profile", icon: <User size={20} /> },
+    { label: "Saved", path: "/saved", icon: <Bookmark size={20} /> },
+    { label: "Settings", path: "/settings", icon: <Settings size={20} /> },
   ];
 
   return (
-    <div className="w-[220px] px-4 py-6 flex flex-col gap-1 h-full">
+    <div className="w-[220px] px-4 py-6 flex flex-col gap-1 bg-white sticky top-[73px] h-[calc(100vh-73px)] overflow-y-auto">
       {navItems.map((item) => (
-        <div
+        <Link
           key={item.label}
-          onClick={() => onItemClick(item.label)}
+          to={item.path}
           className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer ${
-            activeItem === item.label ? "bg-blue-50 text-[#4682B4] font-bold" : "text-black font-normal"
+            location.pathname === item.path ? "bg-blue-50 text-[#4682B4] font-bold" : "text-black font-normal"
           }`}
         >
           {item.icon}
           <span>{item.label}</span>
-        </div>
+        </Link>
       ))}
 
-      <div className="border-t border-[#4682B4] mt-4 pt-4">
+      <div className="border-t border-slate-200 mt-4 pt-4">
         <div onClick={() => setLightMode(!lightMode)} className="flex items-center justify-between p-3 cursor-pointer">
           <div className="flex items-center gap-3">
             <Sun size={20} />

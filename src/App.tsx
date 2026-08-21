@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import MomentsRow from "./components/MomentsRow";
@@ -7,6 +8,7 @@ import Profile from "./components/Profile";
 import RAI from "./components/RAI";
 import Message from "./components/Message";
 import Reel from "./components/Reel";
+import CreateMoment from "./components/CreateMoment";
 
 type Post = {
   id: number;
@@ -15,11 +17,9 @@ type Post = {
   caption: string;
 };
 
-type NavItem = "Home" | "Reel" | "RAI" | "Message" | "Profile" | "Saved" | "Settings";
-
 function App() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeItem, setActiveItem] = useState<NavItem>("Home");
+  const [createMomentOpen, setCreateMomentOpen] = useState(false);
 
   const posts: Post[] = [
     { id: 1, username: "ernest", timeAgo: "2h", caption: "Building Reed from scratch." },
@@ -32,31 +32,41 @@ function App() {
   );
 
   return (
-    <div style={{ backgroundColor: "white", minHeight: "100vh" }}>
-      <Header searchQuery={searchQuery} onSearchChange={setSearchQuery} />
-      <div style={{ display: "flex" }}>
-        <Sidebar activeItem={activeItem} onItemClick={setActiveItem} />
-        <div style={{ flex: 1, minWidth: 0 }}>
-          {activeItem === "Home" && (
-            <div style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "24px" }}>
-              <MomentsRow />
-              {filteredPosts.map((post) => (
-                <PostCard
-                  key={post.id}
-                  username={post.username}
-                  timeAgo={post.timeAgo}
-                  caption={post.caption}
-                />
-              ))}
-            </div>
-          )}
-
-          {activeItem === "Profile" && <Profile />}
-          {activeItem === "RAI" && <RAI />}
-          {activeItem === "Message" && <Message />}
-          {activeItem === "Reel" && <Reel />}
+    <div className="bg-[#F1F5F9] min-h-screen">
+      <Header
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        onOpenCreateMoment={() => setCreateMomentOpen(true)}
+      />
+      <div className="flex">
+        <Sidebar />
+        <div className="flex-1 min-w-0">
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <div className="p-6 flex flex-col gap-6">
+                  <MomentsRow onAddMoment={() => setCreateMomentOpen(true)} />
+                  {filteredPosts.map((post) => (
+                    <PostCard
+                      key={post.id}
+                      username={post.username}
+                      timeAgo={post.timeAgo}
+                      caption={post.caption}
+                    />
+                  ))}
+                </div>
+              }
+            />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/rai" element={<RAI />} />
+            <Route path="/message" element={<Message />} />
+            <Route path="/reel" element={<Reel />} />
+          </Routes>
         </div>
       </div>
+
+      {createMomentOpen && <CreateMoment onClose={() => setCreateMomentOpen(false)} />}
     </div>
   );
 }
