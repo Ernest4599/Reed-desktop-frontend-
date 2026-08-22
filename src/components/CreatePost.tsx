@@ -1,10 +1,16 @@
 import { useState, useRef } from "react";
-import { X, Image, Smile, MapPin, MoreHorizontal, BarChart2, ChevronDown, Trash2 } from "lucide-react";
+import { X, Image, Smile, MapPin, MoreHorizontal, BarChart2, Trash2, FileText } from "lucide-react";
 
 type Option = "photo" | "gif" | "poll" | "location" | "feeling" | "more" | null;
 
 type CreatePostProps = {
   onClose: () => void;
+};
+
+type UploadedFile = {
+  url: string;
+  type: "image" | "video" | "file";
+  name: string;
 };
 
 const feelings = ["Happy", "Excited", "Grateful", "Motivated", "Loved", "Relaxed"];
@@ -14,7 +20,7 @@ const gifPlaceholders = ["GIF 1", "GIF 2", "GIF 3", "GIF 4"];
 export default function CreatePost({ onClose }: CreatePostProps) {
   const [text, setText] = useState("");
   const [activeOption, setActiveOption] = useState<Option>(null);
-  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(null);
   const [selectedGif, setSelectedGif] = useState<string | null>(null);
   const [pollQuestion, setPollQuestion] = useState("");
   const [pollOptions, setPollOptions] = useState<string[]>(["", ""]);
@@ -27,11 +33,16 @@ export default function CreatePost({ onClose }: CreatePostProps) {
     setActiveOption(activeOption === option ? null : option);
   }
 
-  function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-    if (file) {
-      setPhotoPreview(URL.createObjectURL(file));
-    }
+    if (!file) return;
+
+    const url = URL.createObjectURL(file);
+    let type: UploadedFile["type"] = "file";
+    if (file.type.startsWith("image/")) type = "image";
+    else if (file.type.startsWith("video/")) type = "video";
+
+    setUploadedFile({ url, type, name: file.name });
   }
 
   function handleAddPollOption() {
@@ -47,7 +58,7 @@ export default function CreatePost({ onClose }: CreatePostProps) {
   }
 
   function handlePost() {
-    console.log("Posting:", { text, photoPreview, selectedGif, pollQuestion, pollOptions, location, feeling, audience });
+    console.log("Posting:", { text, uploadedFile, selectedGif, pollQuestion, pollOptions, location, feeling, audience });
     onClose();
   }
 
@@ -58,10 +69,7 @@ export default function CreatePost({ onClose }: CreatePostProps) {
           <X size={22} />
         </button>
         <span className="font-bold text-lg">Create Post</span>
-        <button
-          onClick={handlePost}
-          className="bg-[#4682B4] text-white px-5 py-2 rounded-full font-bold"
-        >
+        <button onClick={handlePost} className="bg-[#4682B4] text-white px-5 py-2 rounded-full font-bold">
           Post
         </button>
       </div>
@@ -80,11 +88,22 @@ export default function CreatePost({ onClose }: CreatePostProps) {
           rows={4}
         />
 
-        {photoPreview && (
+        {uploadedFile && (
           <div className="relative mt-4">
-            <img src={photoPreview} className="w-full rounded-lg max-h-96 object-cover" />
+            {uploadedFile.type === "image" && (
+              <img src={uploadedFile.url} className="w-full rounded-lg max-h-96 object-cover" />
+            )}
+            {uploadedFile.type === "video" && (
+              <video src={uploadedFile.url} controls className="w-full rounded-lg max-h-96" />
+            )}
+            {uploadedFile.type === "file" && (
+              <div className="flex items-center gap-3 border border-[#4682B4] rounded-lg p-4">
+                <FileText size={24} className="text-[#4682B4]" />
+                <span className="text-sm">{uploadedFile.name}</span>
+              </div>
+            )}
             <button
-              onClick={() => setPhotoPreview(null)}
+              onClick={() => setUploadedFile(null)}
               className="absolute top-2 right-2 bg-white rounded-full p-1.5 border border-[#4682B4]"
             >
               <Trash2 size={16} />
@@ -179,13 +198,13 @@ export default function CreatePost({ onClose }: CreatePostProps) {
         <div className="border-t border-[#4682B4] mt-6 pt-4">
           <span className="text-slate-400 text-sm">Add to your post</span>
           <div className="grid grid-cols-3 gap-3 mt-3">
-            <input type="file" accept="image/*" ref={fileInputRef} onChange={handlePhotoChange} className="hidden" />
+            <input type="file" accept="image/*,video/*,.pdf,.doc,.docx" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
             <button
               onClick={() => fileInputRef.current?.click()}
               className="flex flex-col items-center gap-1.5 border border-[#4682B4] rounded-lg py-3"
             >
               <Image size={20} />
-              <span className="text-xs">Photo / Video</span>
+              <span className="text-xs">Photo / Video / File</span>
             </button>
             <button
               onClick={() => toggleOption("gif")}
