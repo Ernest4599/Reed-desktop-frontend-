@@ -21,11 +21,21 @@ function App() {
   const [searchQuery, setSearchQuery] = useState("");
   const [createMomentOpen, setCreateMomentOpen] = useState(false);
 
-  const posts: Post[] = [
+  const [posts, setPosts] = useState<Post[]>([
     { id: 1, username: "ernest", timeAgo: "2h", caption: "Building Reed from scratch." },
     { id: 2, username: "jane_doe", timeAgo: "4h", caption: "First moment on Reed!" },
     { id: 3, username: "startup_guy", timeAgo: "6h", caption: "Business, money, power." },
-  ];
+  ]);
+
+  function handleNewPost(caption: string) {
+    const newPost: Post = {
+      id: posts.length + 1,
+      username: "ernest",
+      timeAgo: "Just now",
+      caption,
+    };
+    setPosts([newPost, ...posts]);
+  }
 
   const filteredPosts = posts.filter((post) =>
     post.username.toLowerCase().includes(searchQuery.toLowerCase())
@@ -37,6 +47,7 @@ function App() {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         onOpenCreateMoment={() => setCreateMomentOpen(true)}
+        onCreatePost={handleNewPost}
       />
       <div className="flex">
         <Sidebar />

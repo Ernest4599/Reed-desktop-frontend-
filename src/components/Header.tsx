@@ -6,9 +6,10 @@ type HeaderProps = {
   searchQuery: string;
   onSearchChange: (value: string) => void;
   onOpenCreateMoment: () => void;
+  onCreatePost: (caption: string) => void;
 };
 
-export default function Header({ searchQuery, onSearchChange, onOpenCreateMoment }: HeaderProps) {
+export default function Header({ searchQuery, onSearchChange, onOpenCreateMoment, onCreatePost }: HeaderProps) {
   const [createMenuOpen, setCreateMenuOpen] = useState(false);
   const [createPostOpen, setCreatePostOpen] = useState(false);
 
@@ -79,7 +80,12 @@ export default function Header({ searchQuery, onSearchChange, onOpenCreateMoment
         <div className="h-10 w-10 rounded-full bg-slate-200 cursor-pointer" />
       </div>
 
-      {createPostOpen && <CreatePost onClose={() => setCreatePostOpen(false)} />}
+      {createPostOpen && (
+        <CreatePost
+          onClose={() => setCreatePostOpen(false)}
+          onCreatePost={onCreatePost}
+        />
+      )}
     </div>
   );
 }

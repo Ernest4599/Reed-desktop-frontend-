@@ -5,6 +5,7 @@ type Option = "photo" | "gif" | "poll" | "location" | "feeling" | "more" | null;
 
 type CreatePostProps = {
   onClose: () => void;
+  onCreatePost: (caption: string) => void;
 };
 
 type UploadedFile = {
@@ -17,7 +18,7 @@ const feelings = ["Happy", "Excited", "Grateful", "Motivated", "Loved", "Relaxed
 const locations = ["Lagos, Nigeria", "Abuja, Nigeria", "Remote", "Office"];
 const gifPlaceholders = ["GIF 1", "GIF 2", "GIF 3", "GIF 4"];
 
-export default function CreatePost({ onClose }: CreatePostProps) {
+export default function CreatePost({ onClose, onCreatePost }: CreatePostProps) {
   const [text, setText] = useState("");
   const [activeOption, setActiveOption] = useState<Option>(null);
   const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(null);
@@ -58,9 +59,9 @@ export default function CreatePost({ onClose }: CreatePostProps) {
   }
 
   function handlePost() {
-    console.log("Posting:", { text, uploadedFile, selectedGif, pollQuestion, pollOptions, location, feeling, audience });
+    onCreatePost(text);
     onClose();
-  }
+  }   
 
   return (
     <div className="fixed inset-0 bg-white z-50 flex flex-col">
