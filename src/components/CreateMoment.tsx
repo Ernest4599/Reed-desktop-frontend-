@@ -5,14 +5,14 @@ type MomentOption = "effects" | "sound" | "text" | "media" | null;
 
 type CreateMomentProps = {
   onClose: () => void;
+  onCreateMoment: () => void;
 };
-
 type UploadedMedia = {
   url: string;
   type: "image" | "video";
 };
 
-export default function CreateMoment({ onClose }: CreateMomentProps) {
+export default function CreateMoment({ onClose, onCreateMoment }: CreateMomentProps) {
   const [media, setMedia] = useState<UploadedMedia | null>(null);
   const [activeOption, setActiveOption] = useState<MomentOption>(null);
   const [caption, setCaption] = useState("");
@@ -32,11 +32,10 @@ export default function CreateMoment({ onClose }: CreateMomentProps) {
     setMedia({ url, type });
   }
 
-  function handleShare() {
-    console.log("Sharing moment:", { media, caption, audience });
+function handleShare() {
+    onCreateMoment();
     onClose();
   }
-
   return (
     <div className="fixed inset-0 bg-white z-50 flex flex-col">
       <div className="flex items-center justify-between px-6 py-4 border-b border-[#4682B4]">

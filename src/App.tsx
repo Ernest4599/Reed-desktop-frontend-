@@ -17,6 +17,10 @@ type Post = {
   caption: string;
 };
 
+type Moment = {
+  id: number;
+};
+
 function App() {
   const [searchQuery, setSearchQuery] = useState("");
   const [createMomentOpen, setCreateMomentOpen] = useState(false);
@@ -27,6 +31,8 @@ function App() {
     { id: 3, username: "startup_guy", timeAgo: "6h", caption: "Business, money, power." },
   ]);
 
+  const [moments, setMoments] = useState<Moment[]>([]);
+
   function handleNewPost(caption: string) {
     const newPost: Post = {
       id: posts.length + 1,
@@ -35,6 +41,11 @@ function App() {
       caption,
     };
     setPosts([newPost, ...posts]);
+  }
+
+  function handleNewMoment() {
+    const newMoment: Moment = { id: moments.length + 1 };
+    setMoments([...moments, newMoment]);
   }
 
   const filteredPosts = posts.filter((post) =>
@@ -57,7 +68,7 @@ function App() {
               path="/"
               element={
                 <div className="p-6 flex flex-col gap-6">
-                  <MomentsRow onAddMoment={() => setCreateMomentOpen(true)} />
+                  <MomentsRow moments={moments} onAddMoment={() => setCreateMomentOpen(true)} />
                   {filteredPosts.map((post) => (
                     <PostCard
                       key={post.id}
@@ -77,7 +88,12 @@ function App() {
         </div>
       </div>
 
-      {createMomentOpen && <CreateMoment onClose={() => setCreateMomentOpen(false)} />}
+      {createMomentOpen && (
+        <CreateMoment
+          onClose={() => setCreateMomentOpen(false)}
+          onCreateMoment={handleNewMoment}
+        />
+      )}
     </div>
   );
 }
