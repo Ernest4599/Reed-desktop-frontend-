@@ -1,17 +1,26 @@
 import { useState } from "react";
 import { Plus, Search, Bell, Image, Video, Sparkles, Radio } from "lucide-react";
 import CreatePost from "./CreatePost";
+import CreateReel from "./CreateReel";
 
 type HeaderProps = {
   searchQuery: string;
   onSearchChange: (value: string) => void;
   onOpenCreateMoment: () => void;
   onCreatePost: (caption: string) => void;
+  onCreateReel: () => void;
 };
 
-export default function Header({ searchQuery, onSearchChange, onOpenCreateMoment, onCreatePost }: HeaderProps) {
+export default function Header({
+  searchQuery,
+  onSearchChange,
+  onOpenCreateMoment,
+  onCreatePost,
+  onCreateReel,
+}: HeaderProps) {
   const [createMenuOpen, setCreateMenuOpen] = useState(false);
   const [createPostOpen, setCreatePostOpen] = useState(false);
+  const [createReelOpen, setCreateReelOpen] = useState(false);
 
   function handleCreateClick() {
     setCreateMenuOpen(!createMenuOpen);
@@ -50,7 +59,13 @@ export default function Header({ searchQuery, onSearchChange, onOpenCreateMoment
               <Sparkles size={18} />
               Moment
             </div>
-            <div className="flex items-center gap-2.5 p-3 cursor-pointer">
+            <div
+              onClick={() => {
+                setCreateReelOpen(true);
+                setCreateMenuOpen(false);
+              }}
+              className="flex items-center gap-2.5 p-3 cursor-pointer"
+            >
               <Video size={18} />
               Reel
             </div>
@@ -84,6 +99,13 @@ export default function Header({ searchQuery, onSearchChange, onOpenCreateMoment
         <CreatePost
           onClose={() => setCreatePostOpen(false)}
           onCreatePost={onCreatePost}
+        />
+      )}
+
+      {createReelOpen && (
+        <CreateReel
+          onClose={() => setCreateReelOpen(false)}
+          onCreateReel={onCreateReel}
         />
       )}
     </div>

@@ -15,7 +15,7 @@ type Post = {
   username: string;
   timeAgo: string;
   caption: string;
-};
+ };
 
 type Moment = {
   id: number;
@@ -48,6 +48,9 @@ function App() {
     setMoments([...moments, newMoment]);
   }
 
+function handleNewReel() {
+    console.log("New reel posted");
+  }
   const filteredPosts = posts.filter((post) =>
     post.username.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -59,6 +62,7 @@ function App() {
         onSearchChange={setSearchQuery}
         onOpenCreateMoment={() => setCreateMomentOpen(true)}
         onCreatePost={handleNewPost}
+        onCreateReel={handleNewReel}
       />
       <div className="flex">
         <Sidebar />
