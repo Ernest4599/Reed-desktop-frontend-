@@ -20,6 +20,10 @@ function normalizeContact(contact: string, type: "email" | "phone") {
   return value;
 }
 
+function guessContactType(contact: string): "email" | "phone" {
+  return contact.includes("@") ? "email" : "phone";
+}
+
 type LoginProps = {
   onLogin: (token: string, firstName: string) => void;
 };
@@ -34,9 +38,10 @@ function Login({ onLogin }: LoginProps) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [firstName, setFirstName] = useState("");
+  const [googleError, setGoogleError] = useState("");
 
   const [resetContact, setResetContact] = useState("");
-  const [resetContactType, setResetContactType] = useState<"email" | "phone">("phone");
+  const [resetContactType, setResetContactType] = useState<"email" | "phone">("email");
   const [resetChannel, setResetChannel] = useState<"sms" | "whatsapp">("sms");
   const [resetCode, setResetCode] = useState("");
   const [resetVerifiedToken, setResetVerifiedToken] = useState("");
@@ -57,7 +62,10 @@ function Login({ onLogin }: LoginProps) {
       const res = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contact, password }),
+        body: JSON.stringify({
+          contact: normalizeContact(contact, guessContactType(contact)),
+          password,
+        }),
       });
       const data = await res.json();
 
@@ -135,7 +143,7 @@ function Login({ onLogin }: LoginProps) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          contact: resetContact,
+          contact: normalizeContact(resetContact, resetContactType),
           new_password: newPassword,
           verified_token: resetVerifiedToken,
         }),
@@ -162,12 +170,14 @@ function Login({ onLogin }: LoginProps) {
           <CredentialsStep
             contact={contact}
             password={password}
-            error={error}
+            error={error || googleError}
             loading={loading}
             onContactChange={setContact}
             onPasswordChange={setPassword}
             onSubmit={handleSubmit}
             onForgotPassword={() => setStep("forgot")}
+            onGoogleSuccess={onLogin}
+            onGoogleError={setGoogleError}
           />
         )}
 

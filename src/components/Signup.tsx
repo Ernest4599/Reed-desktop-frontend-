@@ -34,7 +34,7 @@ function Signup({ onLogin }: SignupProps) {
 
   const [firstName, setFirstName] = useState("");
   const [surname, setSurname] = useState("");
-  const [contactType, setContactType] = useState<"email" | "phone">("phone");
+  const [contactType, setContactType] = useState<"email" | "phone">("email");
   const [contact, setContact] = useState("");
   const [channel, setChannel] = useState<"sms" | "whatsapp">("sms");
   const [code, setCode] = useState("");
@@ -48,6 +48,7 @@ function Signup({ onLogin }: SignupProps) {
   const [verifyError, setVerifyError] = useState("");
   const [verifyLoading, setVerifyLoading] = useState(false);
   const [error, setError] = useState("");
+  const [googleError, setGoogleError] = useState("");
 
   const navigate = useNavigate();
 
@@ -112,7 +113,7 @@ function Signup({ onLogin }: SignupProps) {
         body: JSON.stringify({
           first_name: firstName,
           surname,
-          contact,
+          contact: normalizeContact(contact, contactType),
           contact_type: contactType,
           date_of_birth: dob,
           gender,
@@ -139,7 +140,14 @@ function Signup({ onLogin }: SignupProps) {
   return (
     <div className="bg-[#F1F5F9] min-h-screen flex items-center justify-center py-8 px-4">
       <div className="bg-white rounded-2xl border border-[#4682B4] p-8 w-full max-w-sm flex flex-col gap-4">
-        {step === "welcome" && <Welcome onNext={() => setStep("account")} />}
+        {step === "welcome" && (
+          <Welcome
+            onNext={() => setStep("account")}
+            onGoogleSuccess={onLogin}
+            onGoogleError={setGoogleError}
+            googleError={googleError}
+          />
+        )}
 
         {step === "account" && (
           <AccountStep

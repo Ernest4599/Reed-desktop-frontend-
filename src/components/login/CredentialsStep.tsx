@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
-
-const API_URL = "https://reed-backend-lcjv.onrender.com";
+import GoogleButton from "../GoogleButton";
 
 type CredentialsStepProps = {
   contact: string;
@@ -11,11 +10,14 @@ type CredentialsStepProps = {
   onPasswordChange: (v: string) => void;
   onSubmit: () => void;
   onForgotPassword: () => void;
+  onGoogleSuccess: (token: string, firstName: string) => void;
+  onGoogleError: (message: string) => void;
 };
 
 function CredentialsStep({
   contact, password, error, loading,
   onContactChange, onPasswordChange, onSubmit, onForgotPassword,
+  onGoogleSuccess, onGoogleError,
 }: CredentialsStepProps) {
   return (
     <>
@@ -60,19 +62,13 @@ function CredentialsStep({
         {loading ? "Logging in..." : "Log In"}
       </button>
 
-      <div className="flex items-center gap-2 text-slate-300 text-xs">
+      <div className="flex items-center gap-2 text-slate-400 text-xs">
         <div className="flex-1 h-px bg-slate-200" />
         OR
         <div className="flex-1 h-px bg-slate-200" />
       </div>
 
-      <button
-        type="button"
-        onClick={() => (window.location.href = `${API_URL}/auth/google`)}
-        className="border border-slate-200 rounded-full px-4 py-3 font-medium text-slate-700"
-      >
-        Continue with Google
-      </button>
+      <GoogleButton onSuccess={onGoogleSuccess} onError={onGoogleError} />
 
       <p className="text-sm text-slate-400 text-center">
         Don't have an account?{" "}

@@ -14,29 +14,16 @@ type ContactStepProps = {
 
 function ContactStep({
   contactType, contact, channel, error, loading,
-  onContactTypeChange, onContactChange, onChannelChange, onNext,
+  onContactTypeChange: _onContactTypeChange, onContactChange, onChannelChange, onNext,
 }: ContactStepProps) {
   return (
     <>
       <h1 className="text-2xl font-semibold text-center">Verify your contact</h1>
-      <p className="text-slate-400 text-center text-sm">Enter your phone number or email address.</p>
+      <p className="text-slate-400 text-center text-sm">Enter your email address. (Phone/SMS verification coming soon)</p>
 
       {error && <div className="text-sm text-red-500 text-center">{error}</div>}
 
-      <div className="flex gap-2 justify-center">
-        <button
-          onClick={() => onContactTypeChange("phone")}
-          className={`px-4 py-2 rounded-full text-sm font-medium ${contactType === "phone" ? "bg-[#4682B4] text-white" : "bg-slate-100 text-slate-500"}`}
-        >
-          Phone number
-        </button>
-        <button
-          onClick={() => onContactTypeChange("email")}
-          className={`px-4 py-2 rounded-full text-sm font-medium ${contactType === "email" ? "bg-[#4682B4] text-white" : "bg-slate-100 text-slate-500"}`}
-        >
-          Email address
-        </button>
-      </div>
+      {/* Phone/SMS temporarily disabled pending SMS provider approval */}
 
       <input
         type={contactType === "email" ? "email" : "tel"}
